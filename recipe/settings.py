@@ -24,6 +24,7 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # Included your live Render URLs plus local addresses so it works everywhere
 ALLOWED_HOSTS = [
+    'photo-album-management-system.onrender.com',  # Added your exact live URL here
     'recipe-gallery-system.onrender.com',
     'recipe-asset-manager.onrender.com',
     'localhost',
