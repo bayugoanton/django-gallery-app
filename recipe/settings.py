@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # --- YOUR APP MUST BE HERE ---
-    'Gallery', 
+    'gallery', 
     
     'cloudinary',
     'cloudinary_storage',
