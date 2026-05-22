@@ -22,9 +22,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Included your live Render URLs plus local addresses so it works everywhere
+# Whitelisted live Render domain and local environments to eliminate Bad Request (400) errors
 ALLOWED_HOSTS = [
-    'photo-album-management-system.onrender.com',  # Added your exact live URL here
+    'photo-album-management-system.onrender.com',
     'recipe-gallery-system.onrender.com',
     'recipe-asset-manager.onrender.com',
     'localhost',
@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',  # CRITICAL: Core static engine takes priority for asset pipeline compile
+    'django.contrib.staticfiles',  # Core engine takes priority for compilation pipeline stability
 
-    # Move third-party plugins below core applications to stop build interception conflicts
+    # Third-party cloud storage wrappers decoupled below core components
     'cloudinary_storage',
     'cloudinary',
 
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Intercepts and serves CSS/JS rapidly at runtime
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Intercepts and serves layout assets rapidly at runtime
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,14 +74,14 @@ else:
 
 STORAGES = {
     "default": {
-        "BACKEND": DEFAULT_STORAGE_BACKEND,  # Cloudinary for user media photo uploads
+        "BACKEND": DEFAULT_STORAGE_BACKEND,  # Directs user-uploaded recipe photos to Cloudinary
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # Local compile path
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # Clean local compiler path
     },
 }
 
-# Emulates old properties to keep third-party packages quiet during compilation setup 
+# Emulates old properties to keep legacy package dependencies quiet in Django 6.x
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 ROOT_URLCONF = 'recipe.urls'
@@ -89,7 +89,7 @@ ROOT_URLCONF = 'recipe.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # Added directory path to look for base global templates safely
+        'DIRS': [BASE_DIR / 'templates'], # Folder directory to resolve global root templates safely
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
