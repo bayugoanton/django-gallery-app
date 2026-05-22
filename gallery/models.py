@@ -4,17 +4,17 @@ from cloudinary.models import CloudinaryField
 
 class Album(models.Model):
     """
-    Groups individual photos together. Relates directly to a User 
-    to enforce Role-Based Access Control (RBAC) rules.
+    Groups individual photos together. 
+    The 'related_name' on the Photo model allows us to use 
+    album.photos.all in our templates.
     """
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    # Track the creator of the album to handle access permissions
+    # Track the creator of the album
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
     
-    # Architectural flag to separate administrative spaces from standard user spaces
     is_admin_only = models.BooleanField(default=False)
 
     def __str__(self):
@@ -22,8 +22,18 @@ class Album(models.Model):
 
 
 class RecipePhoto(models.Model):
-    # Added null=True and blank=True to let Django bypass the mandatory entry check on older data fields
-    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='photos', null=True, blank=True)
+    """
+    Stores individual recipe photos. 
+    The ForeignKey links each photo to one specific Album.
+    """
+    # The 'related_name' is the key that enables the .photos.all loop
+    album = models.ForeignKey(
+        Album, 
+        on_delete=models.CASCADE, 
+        related_name='photos', 
+        null=True, 
+        blank=True
+    )
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     image = CloudinaryField('image')
