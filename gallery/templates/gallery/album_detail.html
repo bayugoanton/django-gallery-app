@@ -1,51 +1,8 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="container mt-5">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h1 class="fw-bold">{{ album.title }}</h1>
-            <p class="lead text-muted">{{ album.description }}</p>
-        </div>
-        <div class="col-md-4 text-md-end">
-            <a href="{% url 'photo_create' album_id=album.pk %}" class="btn btn-primary">
-                + Add Photo
-            </a>
-            <a href="{% url 'album_list' %}" class="btn btn-outline-secondary">Back</a>
-        </div>
-    </div>
-
-    <form method="GET" action="{% url 'album_detail' pk=album.pk %}" class="mb-4">
-        <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search recipes in this album...">
-    </form>
-
-    <div class="row g-4">
-        {% for photo in photos %}
-            <div class="col-md-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="{{ photo.image.url }}" class="card-img-top" alt="{{ photo.title }}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ photo.title }}</h5>
-                        <p class="card-text text-muted small">{{ photo.description|truncatewords:15 }}</p>
-                        
-                        <div class="mt-3">
-                            <a href="{% url 'photo_edit' pk=photo.pk %}" class="btn btn-sm btn-outline-warning">Edit</a>
-                            <a href="{% url 'photo_delete' pk=photo.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% empty %}
-            <div class="col-12 text-center py-5">
-                <div class="alert alert-info">
-                    {% if query %}
-                        No photos match your search: "{{ query }}"
-                    {% else %}
-                        This album is currently empty. Click "Add Photo" to get started!
-                    {% endif %}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>TEST: If you see this, the file is working.</h1>
+    <p>Album Title: {{ album.title }}</p>
+    <p>Number of photos: {{ photos|length }}</p>
+</body>
+</html>
