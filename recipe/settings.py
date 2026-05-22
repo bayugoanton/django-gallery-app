@@ -22,7 +22,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Included your exact live Render URLs plus local addresses so it works everywhere
+# Included your live Render URLs plus local addresses so it works everywhere
 ALLOWED_HOSTS = [
     'recipe-gallery-system.onrender.com',
     'recipe-asset-manager.onrender.com',
@@ -37,10 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    
-    # CRITICAL: cloudinary_storage MUST appear before staticfiles
+    'django.contrib.staticfiles',  # CRITICAL: Core static engine takes priority for asset pipeline compile
+
+    # Move third-party plugins below core applications to stop build interception conflicts
     'cloudinary_storage',
-    'django.contrib.staticfiles',
     'cloudinary',
 
     # Active custom components
@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Intercepts and serves CSS/JS rapidly at runtime
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,22 +62,26 @@ MIDDLEWARE = [
 USE_CLOUD_STORAGE = os.getenv('USE_CLOUD_STORAGE', 'False') == 'True'
 
 if USE_CLOUD_STORAGE:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+        'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    }
     DEFAULT_STORAGE_BACKEND = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
     DEFAULT_STORAGE_BACKEND = 'django.core.files.storage.FileSystemStorage'
 
 STORAGES = {
     "default": {
-        "BACKEND": DEFAULT_STORAGE_BACKEND,
+        "BACKEND": DEFAULT_STORAGE_BACKEND,  # Cloudinary for user media photo uploads
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # Local compile path
     },
 }
 
-# Fixes legacy package lookups in Django 6.x to prevent 'Settings object has no attribute STATICFILES_STORAGE'
-# Ensure this matches your updated CompressedStaticFilesStorage engine exactly:
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+# Emulates old properties to keep third-party packages quiet during compilation setup 
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 ROOT_URLCONF = 'recipe.urls'
 
