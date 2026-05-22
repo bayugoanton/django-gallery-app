@@ -4,10 +4,14 @@ Production-Ready Enhanced Configuration
 """
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 import dj_database_url
 
-load_dotenv()
+# Safely handle dotenv loading across local and cloud environments
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,8 +22,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Include your live Render URL, plus local addresses so it still works on your computer
+# Included your exact live Render URLs plus local addresses so it works everywhere
 ALLOWED_HOSTS = [
+    'recipe-gallery-system.onrender.com',
     'recipe-asset-manager.onrender.com',
     'localhost',
     '127.0.0.1',
@@ -42,15 +47,6 @@ INSTALLED_APPS = [
     'gallery',
 ]
 
-# Media Storage Interception Logic
-if os.environ.get('USE_CLOUD_STORAGE') == 'True':
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-    }
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -62,11 +58,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# --- CLOUDINARY CONFIGURATION CORRECTION ---
+# --- CLOUDINARY CONFIGURATION ---
 USE_CLOUD_STORAGE = os.getenv('USE_CLOUD_STORAGE', 'False') == 'True'
 
 if USE_CLOUD_STORAGE:
-    # Key changed to match the expected package library standard specification
     CLOUDINARY_STORAGE = {
         'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
         'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
@@ -76,7 +71,6 @@ if USE_CLOUD_STORAGE:
 else:
     DEFAULT_STORAGE_BACKEND = 'django.core.files.storage.FileSystemStorage'
 
-# Keep your existing STORAGES dictionary exactly as it is, pointing to the dynamic backend:
 STORAGES = {
     "default": {
         "BACKEND": DEFAULT_STORAGE_BACKEND,
@@ -138,7 +132,6 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # --- NATIVE AUTHENTICATION REDIRECT ROUTING ---
-# Ensures users are redirected to the gallery home screen cleanly after logging in
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'album_list'
 LOGOUT_REDIRECT_URL = 'login'
