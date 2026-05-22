@@ -1,4 +1,5 @@
 Recipe Gallery Application
+
 A robust Django-based web application designed for managing and showcasing recipe collections. This project utilizes Cloudinary for secure image storage, Django's authentication system for user management, and a clean MVT (Model-View-Template) architecture to provide a seamless user experience.
 
 Features
