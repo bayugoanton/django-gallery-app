@@ -6,28 +6,27 @@ import os
 from pathlib import Path
 import dj_database_url
 
-# Safely handle dotenv loading across local and cloud environments
+# Safely handle dotenv loading
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
     pass
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
+# SECURITY WARNING: Keep the secret key secret!
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key-for-dev')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: Don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Whitelisted live Render domain and local environments to eliminate Bad Request (400) errors
-# --- REPLACE YOUR EXISTING ALLOWED_HOSTS BLOCK WITH THIS ---
-
-# Get ALLOWED_HOSTS from an environment variable, 
-# default to the comma-separated string if not set
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '.onrender.com,localhost,127.0.0.1').split(',')
+# --- FIXED ALLOWED_HOSTS ---
+# Render handles routing at the infrastructure level. 
+# Using '*' or the specific Render domain is required.
+# We prioritize the environment variable, falling back to a safe wildcard.
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -37,17 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # --- YOUR APP MUST BE HERE ---
     'gallery', 
-    
     'cloudinary',
     'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Intercepts and serves layout assets rapidly at runtime
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,14 +67,13 @@ else:
 
 STORAGES = {
     "default": {
-        "BACKEND": DEFAULT_STORAGE_BACKEND,  # Directs user-uploaded recipe photos to Cloudinary
+        "BACKEND": DEFAULT_STORAGE_BACKEND,
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # Clean local compiler path
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
-# Emulates old properties to keep legacy package dependencies quiet in Django 6.x
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 ROOT_URLCONF = 'recipe.urls'
@@ -86,7 +81,7 @@ ROOT_URLCONF = 'recipe.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # Folder directory to resolve global root templates safely
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,19 +115,17 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# --- NATIVE AUTHENTICATION REDIRECT ROUTING ---
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'album_list'
 LOGOUT_REDIRECT_URL = 'login'
