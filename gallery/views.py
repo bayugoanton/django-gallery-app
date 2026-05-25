@@ -43,6 +43,12 @@ class AlbumCreateView(LoginRequiredMixin, CreateView):
     template_name = 'gallery/album_form.html'
     success_url = reverse_lazy('album_list')
 
+    # Add this method to link the user to the album
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        messages.success(self.request, "Album created successfully.")
+        return super().form_valid(form)
+
 class AlbumUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Album
     fields = ['title', 'description', 'is_admin_only']

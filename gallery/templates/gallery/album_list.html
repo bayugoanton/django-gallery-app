@@ -21,13 +21,13 @@
 
 <div class="navbar">
     <h1>Photo System Dashboard</h1>
-    <a href="{% url 'logout' %}" class="btn-logout">Log Out</a>
-</div>
-
-<form method="POST" action="{% url 'logout' %}" style="display:inline;">
+    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
     {% csrf_token %}
     <button type="submit" class="btn-logout" style="border:none; cursor:pointer;">Log Out</button>
 </form>
+</div>
+
+
 
 <div class="container">
     <h2>My Albums</h2>
