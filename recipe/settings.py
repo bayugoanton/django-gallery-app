@@ -24,11 +24,13 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # Whitelisted live Render domain and local environments to eliminate Bad Request (400) errors
 ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
     'photo-album-management-system.onrender.com',
     'recipe-gallery-system.onrender.com',
     'recipe-asset-manager.onrender.com',
-    'localhost',
-    '127.0.0.1',
+    'photo-album-management-system-3smq.onrender.com', # Add your new URL here
+    '.onrender.com', # This wildcard allows ALL *.onrender.com subdomains
 ]
 
 # Application definition
