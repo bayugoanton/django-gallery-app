@@ -1,8 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ album.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body>
-    <h1>TEST: If you see this, the file is working.</h1>
-    <p>Album Title: {{ album.title }}</p>
-    <p>Number of photos: {{ photos|length }}</p>
+    <div class="container mt-5">
+        <a href="{% url 'album_list' %}" class="btn btn-secondary mb-3">Back to Albums</a>
+        
+        <h1>{{ album.title }}</h1>
+        <p>{{ album.description }}</p>
+
+        <form method="GET" class="mb-4">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search photos..." class="form-control">
+            <button type="submit" class="btn btn-primary mt-2">Search</button>
+        </form>
+
+        <hr>
+
+        <div class="row">
+            {% for photo in photos %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% if photo.image %}
+                    <img src="{{ photo.image.url }}" class="card-img-top" alt="{{ photo.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ photo.title }}</h5>
+                        <p class="card-text">{{ photo.description }}</p>
+                        <a href="{% url 'photo_update' photo.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'photo_delete' photo.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No photos found in this album.</p>
+            {% endfor %}
+        </div>
+        
+        <a href="{% url 'photo_create' album.pk %}" class="btn btn-success">Upload New Photo</a>
+    </div>
 </body>
 </html>
