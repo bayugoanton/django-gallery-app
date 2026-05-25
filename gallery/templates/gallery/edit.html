@@ -20,15 +20,22 @@
 <div class="container">
     <h2>Edit Details</h2>
     <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            {{ form.as_p }}
-        </div>
+    {% csrf_token %}
+    
+    <div class="form-group">
+        {{ form.as_p }}
+    </div>
 
-        <button type="submit" class="btn-save">Save Changes</button>
-        <a href="{% url 'album_list' %}" class="btn-cancel">Cancel</a>
-    </form>
+    {% if object.image %}
+        <div style="margin-bottom: 15px;">
+            <p>Current Image:</p>
+            <img src="{{ object.image.url }}" alt="Current image" style="max-width: 150px; border-radius: 8px;">
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn-save">Save Changes</button>
+    <a href="{% url 'album_list' %}" class="btn-cancel">Cancel</a>
+</form>
 </div>
 
 </body>

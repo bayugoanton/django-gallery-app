@@ -11,6 +11,8 @@ class Album(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='albums/') # Ensure this exists
+    # ... other fields
     
     # Track the creator of the album
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
